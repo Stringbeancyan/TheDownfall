@@ -1,0 +1,18 @@
+# Unreal-generated artifacts; authored source and assets remain versioned.
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+.idea/
+*.sln
+*.suo
+*.opensdf
+*.VC.db
+*.VC.opendb
+*.xcodeproj/
+*.xcworkspace/
+__pycache__/
+*.pyc
+.DS_Store
+Artifacts/

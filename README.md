@@ -1,0 +1,96 @@
+# DOWNFALL
+
+An original multiplayer urban operations game targeting **Unreal Engine 5.6**.
+Four responders enter **Breakwater**, a district of the fictional coastal city
+**Velmora**, to restore a relay while damaged municipal robots control the streets.
+The long-term design expands into combined-arms battles across a connected region.
+
+**Current delivery: source prototype, not a compiled or photorealistic game.**
+The project contains real C++ gameplay systems and an editor script that assembles
+the first blockout scene. Unreal Engine is absent from the development cloud
+machine, so UHT/C++ compilation, map generation, rendering, cooking and live
+multiplayer validation have **not run**. Production meshes, textures, skeletal
+animation, dialogue recordings and sound assets are not bundled.
+
+## Start here
+
+1. Install a licensed **UE 5.6** distribution and its supported C++ toolchain.
+   A source engine build with server support is needed for `DownfallServer`.
+2. Set `UE_ROOT` to the folder containing `Engine/` and run, from this checkout:
+
+   ```sh
+   python Scripts/build.py --target editor
+   ```
+
+3. Open `Downfall.uproject`. On the first run there is no generated startup map;
+   use a blank editor world and execute `Scripts/build_vertical_slice.py` through
+   **Tools → Execute Python Script**. It creates and saves
+   `/Game/Downfall/Maps/L_Breakwater` and six blockout materials. Existing maps are
+   protected unless explicit rebuild is enabled. See [tooling instructions](Scripts/README.md).
+4. Start the first separate-process multiplayer test:
+
+   ```sh
+   python Scripts/run_multiplayer.py --clients 2
+   ```
+
+5. Perform [multiplayer acceptance](Docs/MultiplayerAcceptance.md), then repeat
+   with four clients and cooked game/server targets. A launcher completing is
+   not evidence that the gameplay tests passed.
+
+No project-specific account, service key or asset purchase is needed for the
+primitive blockout. Use the existing checkout; cloud tasks are already isolated.
+
+## Native systems
+
+| Source | Delivered behavior; engine validation pending |
+|---|---|
+| `Core/` | GameInstance, GameMode, GameState, PlayerController, PlayerState; four-player co-op policy and respawn |
+| `Character/` | Enhanced Input, third-person shoulder camera, walking/jumping/crouching, predicted sprint, health/combat composition |
+| `Combat/` | Kestrel C6 automatic rifle, Vesper P12 sidearm; server projectiles, finite ammunition, reload, cadence/request limits and team damage rules |
+| `Vehicle/` | One-seat utility vehicle, validated entry/exit, server kinematic movement and replicated snapshots; no Chaos suspension or client prediction |
+| `AI/` | Sentinel R3 primitive robot: patrol, visible-target pursuit, last-seen search, line-of-sight fire and sensor-region damage multiplier |
+| `World/` | Server clock/weather transitions, client lighting/fog, relay capture and persistent destructible-cover states |
+| `Presentation/` | Native HUD, optional 12-second camera/subtitle rehearsal, asset-driven positional audio API and acoustic boxes |
+
+The map generator assembles a 180 × 180 m district with four enterable blockout
+buildings, two crossing roads, four player starts, four breakable barriers, one
+robot, one vehicle, a relay and scene lighting. It is a small non-partitioned
+map. The full World Partition city is a production milestone.
+
+## Controls
+
+| Input | Action |
+|---|---|
+| WASD / mouse | Move / aim |
+| Left mouse / R | Fire / reload |
+| Q or wheel up | Switch weapon |
+| Shift / Ctrl / Space | Sprint / crouch / jump |
+| V | Switch camera shoulder |
+| E | Enter nearby vehicle; exit when nearly stopped and the exit is clear |
+| Vehicle WASD / Space | Throttle, reverse, steering / brake |
+| F8 / F9 | Play / skip local cinematic rehearsal; use standalone clients to avoid PIE shortcut conflicts |
+| Escape | Release / recapture mouse; the server continues running |
+
+## Production handoff
+
+- [Production bible](Docs/ProductionBible.md): concept, visual identity, modes, regional map and phase gates.
+- [Architecture](Docs/Architecture.md): exact folder conventions, authority boundaries, network and scale migration.
+- [Vertical slice and first cinematic](Docs/VerticalSlice.md): scene layout, mission flow, shot list, dialogue and asset integration.
+- [Art, animation, materials and audio](Docs/ArtAndPerformancePipelines.md): production recipes, asset budgets, accessibility and profiling.
+- [Asset manifest](Content/Downfall/AssetManifest.json): 20 original model specifications with dimensions, topology, UVs, rigs, collision, LODs and damage.
+- [Feature status](Docs/FeatureStatus.md): IMPLEMENTED / PROTOTYPED / PLANNED / PLACEHOLDER distinctions.
+- [Validation evidence](Docs/Validation.md): checks actually executed and remaining engine gates.
+
+Portable checks available without Unreal:
+
+```sh
+python Scripts/validate_assets.py
+python -m unittest discover -s Tests -v
+g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=undefined -I Source/Downfall/Public -x c++ Source/Downfall/Private/Combat/DownfallCombatRules.portable.inl -o /tmp/downfall-combat-rules
+/tmp/downfall-combat-rules
+g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=undefined -I Source/Downfall/Public -x c++ Source/Downfall/Private/World/DownfallWorldMath.portable.inl -o /tmp/downfall-world-math
+/tmp/downfall-world-math
+```
+
+These execute the same portable combat and environmental math used by native
+gameplay; they do not replace Unreal networking, rendering or integration tests.

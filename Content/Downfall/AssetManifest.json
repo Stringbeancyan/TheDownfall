@@ -1,0 +1,1556 @@
+{
+  "schema_version": 1,
+  "title": "Downfall",
+  "engine_target": "Unreal Engine 5.6",
+  "units": "meters",
+  "status_note": "All entries are original PLANNED production asset specifications, not delivered 3D models. The map generator and native actors use clearly identified primitive PLACEHOLDER geometry.",
+  "coordinate_system": "Unreal: centimeters at import, X forward, Y right, Z up. dimensions_m = X extent, Y extent, Z extent.",
+  "texture_policy": "8K is a source ceiling reserved for the hero operative and service vehicle. Split body/cabin/material sets according to entry UV notes; use streamed mips. Source resolutions are not promises of resident 8K.",
+  "quality_gates": [
+    "DCC manifold and normals check",
+    "Valid physical dimensions and pivot",
+    "Material energy conservation review",
+    "Collision and gameplay clearance review",
+    "LOD transition and groom fallback review",
+    "Dedicated server contains no render-dependent gameplay",
+    "Streaming memory and frame-time budget review",
+    "Licensed sources and performer consent review"
+  ],
+  "assets": [
+    {
+      "id": "SK_Operative_Mira",
+      "category": "character",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Characters/SK_Operative_Mira",
+      "dimensions_m": [
+        0.62,
+        0.36,
+        1.78
+      ],
+      "topology": {
+        "triangles_lod0": 145000,
+        "authoring_notes": "Retopologized deformation loops around mouth, eyes, shoulders, elbows and fingers; 145k triangles includes body/face but excludes hair groom and equipment."
+      },
+      "nanite": {
+        "enabled_target": false,
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+      },
+      "materials": [
+        "Skin: layered SSS, pore normals, regional roughness and nonuniform perfusion masks",
+        "Eyes: separate cornea/tear meniscus, moist iris, sclera veins; physical iris depth",
+        "Uniform: woven fabric, stitching, sweat/wetness masks; no metallic response",
+        "Hair: strand groom high tier, authored cards fallback"
+      ],
+      "uv": {
+        "layout": "Separate head 8K source and body 4K source UDIM-compatible authoring tiles; repack to bounded runtime sets. Unique face UV without mirrored scars.",
+        "texel_density_px_per_meter": 2048
+      },
+      "texture_sets": [
+        {
+          "name": "SK_Operative_Mira_PBR",
+          "source_resolution": 8192,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "subsurface_color",
+            "thickness",
+            "micro_normal",
+            "wetness_mask"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "skeletal",
+        "skeleton": "SKEL_DownfallHuman_v1",
+        "notes": "Bake authored transforms; document bone axes; export centimeters, X forward, Z up; physical asset independent from visual topology."
+      },
+      "collision": [
+        "Capsule for locomotion; per-bone physics asset for hit zones and ragdoll",
+        "Facial mesh never used for movement collision"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Four authored LODs; profile screen-size transitions; preserve weapon/cabin silhouette and readable robot hit regions. Animation update budget is independent of mesh LOD."
+      },
+      "damage_states": [
+        "Healthy",
+        "Suppressed posture",
+        "Injured locomotion",
+        "Incapacitated",
+        "Ragdoll"
+      ],
+      "animations": [
+        "Walk/jog/sprint start-stop and 8-way locomotion",
+        "Crouch, prone, vault, mantle, cover, swimming, ladder and vehicle entry/exit",
+        "Two-weapon aim offsets and reloads",
+        "Breathing, saccades, blinks, idle variation, phonemes and 60fps authored facial performance"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "body_bones": "UE mannequin-compatible retarget chains; twist/corrective joints; 3 bones per finger plus metacarpals",
+        "facial_rig": "FACS action units with jaw, lip, cheek, tongue and eyelid correctives; eye aim with gaze limits",
+        "sockets": [
+          "hand_r_weapon",
+          "hand_l_support",
+          "spine_radio",
+          "pelvis_holster",
+          "head_camera"
+        ],
+        "capture": "Consent-cleared actor body/face capture and voice recording; no captured performances included",
+        "cloth": "Chaos cloth on jacket hems and loose straps; pinned zones authored; LOD0-1 only",
+        "hair": "Wind-aware groom simulation local to player, distance-gated; cards at gameplay distance"
+      }
+    },
+    {
+      "id": "SK_Civilian_DockWorker",
+      "category": "character",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Characters/SK_Civilian_DockWorker",
+      "dimensions_m": [
+        0.65,
+        0.38,
+        1.83
+      ],
+      "topology": {
+        "triangles_lod0": 85000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": false,
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+      },
+      "materials": [
+        "Skin and eye masters shared with original human pipeline",
+        "Layered canvas coat, reflective work stripes, rubber boots"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SK_Civilian_DockWorker_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "subsurface_color",
+            "thickness",
+            "wetness_mask"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "skeletal",
+        "skeleton": "SKEL_DownfallHuman_v1",
+        "notes": "Bake authored transforms; document bone axes; export centimeters, X forward, Z up; physical asset independent from visual topology."
+      },
+      "collision": [
+        "Capsule movement",
+        "Reduced 18-body physics asset for ragdoll"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Four authored LODs; profile screen-size transitions; preserve weapon/cabin silhouette and readable robot hit regions. Animation update budget is independent of mesh LOD."
+      },
+      "damage_states": [
+        "Intact",
+        "Material wear overlays only; gameplay damage must be authored separately"
+      ],
+      "animations": [
+        "Walking carrying crate",
+        "Conversation gestures and gaze",
+        "Rain sheltering",
+        "Panic run",
+        "Phone recording",
+        "Seated rest"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "facial_rig": "Same action-unit contract with reduced far-field blendshape evaluation",
+        "equipment": "Removable safety helmet, radio and tool belt sockets",
+        "schedules": "Travel/work/rest behaviors are planned data assets, not supplied crowds"
+      }
+    },
+    {
+      "id": "SK_Sentinel_R3",
+      "category": "robot",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/AI/Robots/SK_Sentinel_R3",
+      "dimensions_m": [
+        1.18,
+        0.94,
+        2.15
+      ],
+      "topology": {
+        "triangles_lod0": 95000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": false,
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+      },
+      "materials": [
+        "Ceramic armor: chips reveal fiber-metal substrate",
+        "Brushed joint housings with oil and heat discoloration",
+        "Sensor glass and emissive status lens"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SK_Sentinel_R3_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height",
+            "emissive",
+            "damage_mask"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "skeletal",
+        "skeleton": "SKEL_Sentinel_R3",
+        "notes": "Bake authored transforms; document bone axes; export centimeters, X forward, Z up; physical asset independent from visual topology."
+      },
+      "collision": [
+        "Capsule for navigation",
+        "Separate camera, power module, arm weapon and leg hit primitives mapped to server damage regions"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Four authored LODs; profile screen-size transitions; preserve weapon/cabin silhouette and readable robot hit regions. Animation update budget is independent of mesh LOD."
+      },
+      "damage_states": [
+        "Intact",
+        "Sensor blinded",
+        "Weapon disabled",
+        "Leg crippled",
+        "Core exposed",
+        "Destroyed"
+      ],
+      "animations": [
+        "Patrol walk",
+        "Aim tracking",
+        "Weapon fire",
+        "Sensor-loss search",
+        "Left/right leg limp",
+        "Stagger",
+        "Power-collapse"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "bone_contract": [
+          "root",
+          "pelvis",
+          "spine",
+          "sensor_yaw",
+          "sensor_pitch",
+          "weapon_r",
+          "power_core",
+          "hip_l",
+          "knee_l",
+          "ankle_l",
+          "hip_r",
+          "knee_r",
+          "ankle_r"
+        ],
+        "rig": "Mechanical stops must constrain aiming; foot IK solves per-leg terrain; no impossible knee flips",
+        "prototype": "Native robot currently uses primitive body parts; target skeletal mesh is not supplied"
+      }
+    },
+    {
+      "id": "SK_ServiceCar_Vela",
+      "category": "vehicle",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Vehicles/SK_ServiceCar_Vela",
+      "dimensions_m": [
+        4.32,
+        1.83,
+        1.51
+      ],
+      "topology": {
+        "triangles_lod0": 170000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": false,
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+      },
+      "materials": [
+        "Paint with clearcoat, orange peel and directional scratches",
+        "Molded cabin plastics, woven seating, rubber seals",
+        "Layered glass with rain/wiper masks",
+        "Tire rubber with worn sidewall normals; iron discs with brake dust"
+      ],
+      "uv": {
+        "layout": "Unique body 8K source, cabin 4K, wheel shared 2K, lamp/glass 1K; vertex colors mask dirt runoff and deformation limits.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SK_ServiceCar_Vela_PBR",
+          "source_resolution": 8192,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height",
+            "clearcoat",
+            "clearcoat_roughness",
+            "dirt_mask"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "skeletal",
+        "skeleton": "SKEL_VelaVehicle_v1",
+        "notes": "Bake authored transforms; document bone axes; export centimeters, X forward, Z up; physical asset independent from visual topology."
+      },
+      "collision": [
+        "Simplified convex chassis; separate wheel sphere/capsule shapes",
+        "Door and trunk rigid parts; interior camera blocking volume",
+        "No per-triangle moving-body collision"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Four authored LODs; profile screen-size transitions; preserve weapon/cabin silhouette and readable robot hit regions. Animation update budget is independent of mesh LOD."
+      },
+      "damage_states": [
+        "Intact",
+        "Scratched",
+        "Dented panels",
+        "Cracked windshield",
+        "Broken lamps",
+        "Disabled engine"
+      ],
+      "animations": [
+        "Steering",
+        "Four-wheel suspension",
+        "Doors",
+        "Wipers",
+        "Dashboard needles",
+        "Brake/throttle pedal",
+        "Driver entry/exit"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "wheels": "0.64m diameter; suspension travel 0.18m; dimensions are visual targets, physical tuning requires measured testing",
+        "dashboard": "Speed/RPM/gear/fuel instrument data; emissive night illumination",
+        "mirrors": "Screen-space approximation standard; budgeted scene captures optional high tier",
+        "prototype": "Native kinematic primitive car; Chaos drivetrain and realistic mesh remain planned"
+      }
+    },
+    {
+      "id": "SK_UtilityTruck_Lark",
+      "category": "vehicle",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Vehicles/SK_UtilityTruck_Lark",
+      "dimensions_m": [
+        6.3,
+        2.35,
+        2.62
+      ],
+      "topology": {
+        "triangles_lod0": 125000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": false,
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+      },
+      "materials": [
+        "Powder-coated steel cab",
+        "Fabric seats and rubber floor",
+        "Oxidized undercarriage and dirty cargo liner"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SK_UtilityTruck_Lark_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "skeletal",
+        "skeleton": "SKEL_LarkTruck_v1",
+        "notes": "Bake authored transforms; document bone axes; export centimeters, X forward, Z up; physical asset independent from visual topology."
+      },
+      "collision": [
+        "Three convex chassis hulls",
+        "Wheel collision; cargo bed separate overlap"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Four authored LODs; profile screen-size transitions; preserve weapon/cabin silhouette and readable robot hit regions. Animation update budget is independent of mesh LOD."
+      },
+      "damage_states": [
+        "Intact",
+        "Body dents",
+        "Glass break",
+        "Tire damage",
+        "Immobilized"
+      ],
+      "animations": [
+        "Wheel/suspension motion",
+        "Cab doors",
+        "Tailgate",
+        "Driver entry/exit"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied."
+    },
+    {
+      "id": "SK_ReconDrone_Kite",
+      "category": "vehicle",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Vehicles/SK_ReconDrone_Kite",
+      "dimensions_m": [
+        1.25,
+        1.25,
+        0.38
+      ],
+      "topology": {
+        "triangles_lod0": 24000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": false,
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+      },
+      "materials": [
+        "Carbon composite frame",
+        "Dusty polymer housings",
+        "Optical glass and motor copper"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SK_ReconDrone_Kite_PBR",
+          "source_resolution": 2048,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "skeletal",
+        "skeleton": "SKEL_KiteDrone_v1",
+        "notes": "Bake authored transforms; document bone axes; export centimeters, X forward, Z up; physical asset independent from visual topology."
+      },
+      "collision": [
+        "Single convex main hull plus arm capsules",
+        "Rotor cosmetic collision omitted"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Four authored LODs; profile screen-size transitions; preserve weapon/cabin silhouette and readable robot hit regions. Animation update budget is independent of mesh LOD."
+      },
+      "damage_states": [
+        "Intact",
+        "Sensor failure",
+        "Rotor loss",
+        "Disabled"
+      ],
+      "animations": [
+        "Rotor spin",
+        "Camera gimbal",
+        "Landing feet"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied."
+    },
+    {
+      "id": "SK_Carbine_KestrelC6",
+      "category": "weapon",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Weapons/SK_Carbine_KestrelC6",
+      "dimensions_m": [
+        0.88,
+        0.09,
+        0.28
+      ],
+      "topology": {
+        "triangles_lod0": 45000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": false,
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+      },
+      "materials": [
+        "Hard-anodized aluminum receiver with localized edge wear",
+        "Glass-filled polymer grip",
+        "Oiled steel bolt and barrel"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SK_Carbine_KestrelC6_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height",
+            "heat_mask"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "skeletal",
+        "skeleton": "SKEL_KestrelC6_v1",
+        "notes": "Bake authored transforms; document bone axes; export centimeters, X forward, Z up; physical asset independent from visual topology."
+      },
+      "collision": [
+        "Simple pickup box",
+        "Server projectile uses simulation and trace, never rendered muzzle-mesh collision"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Four authored LODs; profile screen-size transitions; preserve weapon/cabin silhouette and readable robot hit regions. Animation update budget is independent of mesh LOD."
+      },
+      "damage_states": [
+        "Cosmetic pristine",
+        "Worn finish"
+      ],
+      "animations": [
+        "Bolt cycle",
+        "Magazine extraction/insertion",
+        "Selector",
+        "Charging handle"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "dimensions": "Fictional silhouette and engineering language; no brand marks or copied commercial weapon mesh",
+        "sockets": [
+          "muzzle",
+          "eject",
+          "magazine",
+          "sight",
+          "left_grip"
+        ],
+        "first_person": "Separate view-sensitive animation corrections while sharing third-person authoritative shot data"
+      }
+    },
+    {
+      "id": "SK_Pistol_VesperP12",
+      "category": "weapon",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Weapons/SK_Pistol_VesperP12",
+      "dimensions_m": [
+        0.205,
+        0.035,
+        0.14
+      ],
+      "topology": {
+        "triangles_lod0": 24000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": false,
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+      },
+      "materials": [
+        "Blackened alloy slide",
+        "Textured polymer grip",
+        "Brushed magazine and breech"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SK_Pistol_VesperP12_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "skeletal",
+        "skeleton": "SKEL_VesperP12_v1",
+        "notes": "Bake authored transforms; document bone axes; export centimeters, X forward, Z up; physical asset independent from visual topology."
+      },
+      "collision": [
+        "Simple pickup box; no actor physical bullet simulation"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Four authored LODs; profile screen-size transitions; preserve weapon/cabin silhouette and readable robot hit regions. Animation update budget is independent of mesh LOD."
+      },
+      "damage_states": [
+        "Cosmetic pristine",
+        "Worn finish"
+      ],
+      "animations": [
+        "Slide cycle",
+        "Magazine change",
+        "Slide lock",
+        "Trigger"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "sockets": [
+          "muzzle",
+          "eject",
+          "magazine",
+          "sight"
+        ]
+      }
+    },
+    {
+      "id": "SM_ModularConcreteWall_4m",
+      "category": "environment",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Environment/SM_ModularConcreteWall_4m",
+      "dimensions_m": [
+        4,
+        0.28,
+        3.4
+      ],
+      "topology": {
+        "triangles_lod0": 45000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Poured concrete: aggregate, form ties, construction seams, micro-normal cracks, vertical rain stains"
+      ],
+      "uv": {
+        "layout": "UV0 world-scaled tileable concrete at 1024px/m; UV1 unique weathering masks; trim UV for form seams.",
+        "texel_density_px_per_meter": 1024
+      },
+      "texture_sets": [
+        {
+          "name": "SM_ModularConcreteWall_4m_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "Single box for intact wall; openings use separate wall segments"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Intact",
+        "Surface pocks",
+        "Exposed rebar replacement mesh",
+        "Breached authored state"
+      ],
+      "animations": [
+        "Static environment asset; no skeletal animation"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "grid": "10cm snap; 4m bay, 3.4m floor height",
+        "destruction": "Server switches discrete states; Chaos debris cosmetic and bounded"
+      }
+    },
+    {
+      "id": "SM_ShopFront_DoorBay",
+      "category": "environment",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Environment/SM_ShopFront_DoorBay",
+      "dimensions_m": [
+        4,
+        0.34,
+        3.4
+      ],
+      "topology": {
+        "triangles_lod0": 55000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Powder-coated metal frame",
+        "Weathered painted masonry",
+        "Separate transparent laminated glazing"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_ShopFront_DoorBay_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "Frame hulls preserve 1.5m x2.5m clear doorway",
+        "Glass pane trace surface separate from frame"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Intact",
+        "Cracked glazing",
+        "Pane removed",
+        "Door detached"
+      ],
+      "animations": [
+        "Separate door rotates about measured hinge; door animation is a separate actor"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied."
+    },
+    {
+      "id": "SM_InteriorStair_2Flights",
+      "category": "environment",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Environment/SM_InteriorStair_2Flights",
+      "dimensions_m": [
+        2.6,
+        5.4,
+        3.4
+      ],
+      "topology": {
+        "triangles_lod0": 38000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Worn precast steps with non-slip strips",
+        "Painted steel balustrade with fingerprints"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_InteriorStair_2Flights_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "Walkable ramp collision for traversal",
+        "Separate precise visibility trace mesh; railing capsules"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Intact",
+        "Material wear overlays only; gameplay damage must be authored separately"
+      ],
+      "animations": [
+        "Static environment asset; no skeletal animation"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "clearance": "1.2m stair width, 2.1m headroom, 0.17m rise and 0.28m run targets; adapt landing to kit module",
+        "accessibility": "Readable edge contrast; gameplay path length matches world layout"
+      }
+    },
+    {
+      "id": "SM_AsphaltRoad_8m",
+      "category": "environment",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Environment/SM_AsphaltRoad_8m",
+      "dimensions_m": [
+        8,
+        8,
+        0.18
+      ],
+      "topology": {
+        "triangles_lod0": 16000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Asphalt aggregate and repaired patches",
+        "Road paint with microcracking",
+        "RVT dirt and wetness blend"
+      ],
+      "uv": {
+        "layout": "Tileable UV0 world-scaled 512px/m; UV1 patch masks; RVT blends shoulder terrain.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_AsphaltRoad_8m_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height",
+            "wetness_mask",
+            "puddle_mask"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "Simple road slab; pavement seams do not snag capsules"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Intact",
+        "Bullet decal only",
+        "Authored crater replacement planned"
+      ],
+      "animations": [
+        "Static environment asset; no skeletal animation"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "rain": "Slope-dependent puddle mask; roughness and darkening calibrated; visible droplets require separate effects",
+        "displacement": "Use tested Nanite displacement only after platform validation; do not change collision with microdetail"
+      }
+    },
+    {
+      "id": "SM_StormDrain",
+      "category": "prop",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Props/SM_StormDrain",
+      "dimensions_m": [
+        0.8,
+        0.45,
+        0.12
+      ],
+      "topology": {
+        "triangles_lod0": 18000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Cast iron with oxide buildup",
+        "Wet grit and trapped leaves"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_StormDrain_PBR",
+          "source_resolution": 2048,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "Thin collision box; grate holes are optical, not player collision"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Intact",
+        "Bent grate replacement"
+      ],
+      "animations": [
+        "Static environment asset; no skeletal animation"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied."
+    },
+    {
+      "id": "SM_TransitShelter",
+      "category": "environment",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Environment/SM_TransitShelter",
+      "dimensions_m": [
+        4.8,
+        1.6,
+        2.6
+      ],
+      "topology": {
+        "triangles_lod0": 72000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Painted aluminum canopy",
+        "Separate scratched tempered-glass panels",
+        "Original illuminated transit map"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_TransitShelter_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "Canopy/poles convex shapes",
+        "Glass independently destructible traces; clear open boarding path"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Intact",
+        "Glass fractured",
+        "Panels removed",
+        "Canopy damaged"
+      ],
+      "animations": [
+        "Static environment asset; no skeletal animation"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied."
+    },
+    {
+      "id": "SM_RelayCabinet",
+      "category": "prop",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Props/SM_RelayCabinet",
+      "dimensions_m": [
+        1.6,
+        0.7,
+        2.1
+      ],
+      "topology": {
+        "triangles_lod0": 52000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Powder-coated cabinet and welded seams",
+        "Insulated cable jackets",
+        "Emissive status panel with original labels"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_RelayCabinet_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "rigid_parts",
+        "skeleton": null,
+        "notes": "Bake authored transforms; document bone axes; export centimeters, X forward, Z up; physical asset independent from visual topology."
+      },
+      "collision": [
+        "Cabinet box and separate interaction query bounds"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Intact",
+        "Armor damaged",
+        "Door breached",
+        "Power disabled"
+      ],
+      "animations": [
+        "Door hinge",
+        "Status lamps via material parameters"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "interaction": "Server verifies distance and occlusion; cosmetic status screen reads replicated objective state"
+      }
+    },
+    {
+      "id": "SM_BreakableBarrier",
+      "category": "prop",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Props/SM_BreakableBarrier",
+      "dimensions_m": [
+        3.2,
+        0.7,
+        1.8
+      ],
+      "topology": {
+        "triangles_lod0": 46000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Cast concrete with chipped aggregate",
+        "Rusted lifting loops and layered paint"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_BreakableBarrier_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "Intact box; after server destruction collision removed or swaps authored hull",
+        "Client debris has no authoritative collision"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Intact",
+        "Cracked at 50 percent target durability",
+        "Breached discrete server state",
+        "Cosmetic debris"
+      ],
+      "animations": [
+        "Static environment asset; no skeletal animation"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "prototype": "Native DestructibleCover uses replicated health and box mesh; authored fracture asset is planned"
+      }
+    },
+    {
+      "id": "SM_OfficeDesk",
+      "category": "prop",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Props/SM_OfficeDesk",
+      "dimensions_m": [
+        1.4,
+        0.7,
+        0.74
+      ],
+      "topology": {
+        "triangles_lod0": 22000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Laminate with worn edges",
+        "Brushed leg supports",
+        "Matte polymer cable grommet"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_OfficeDesk_PBR",
+          "source_resolution": 2048,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "Five simplified box hulls leaving usable knee space"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Intact",
+        "Cosmetic scratches",
+        "Authored collapsed replacement"
+      ],
+      "animations": [
+        "Static environment asset; no skeletal animation"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied."
+    },
+    {
+      "id": "SM_Streetlight",
+      "category": "prop",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Props/SM_Streetlight",
+      "dimensions_m": [
+        0.55,
+        1.65,
+        6.2
+      ],
+      "topology": {
+        "triangles_lod0": 26000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Galvanized steel and salt corrosion",
+        "Frosted lamp cover",
+        "Painted base"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_Streetlight_PBR",
+          "source_resolution": 2048,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "Pole capsule and base box; lamp arm omitted from movement collision"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Intact",
+        "Lamp dark",
+        "Fallen authored state"
+      ],
+      "animations": [
+        "Static environment asset; no skeletal animation"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "illumination": "Day/night controller activates tagged lights; no full-shadow casting on every lamp; select local shadow budget"
+      }
+    },
+    {
+      "id": "SM_NeonWayfinder",
+      "category": "prop",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Props/SM_NeonWayfinder",
+      "dimensions_m": [
+        2.8,
+        0.15,
+        0.65
+      ],
+      "topology": {
+        "triangles_lod0": 8000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": true,
+        "reason": "Static opaque high-detail geometry; validate aggregate geometry and fallback mesh on target hardware."
+      },
+      "materials": [
+        "Enamelled metal enclosure",
+        "Emissive original typography mask",
+        "Surface grime around fasteners"
+      ],
+      "uv": {
+        "layout": "UV0 uniquely unwrapped; UV1 optional bake transfer. No shared mirrored UV on hero visible damage surfaces; 8px gutter at shipping mip0.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_NeonWayfinder_PBR",
+          "source_resolution": 2048,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "metallic",
+            "height",
+            "emissive"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "One simple box attached to building"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Nanite clusters plus authored collision, HLOD proxy and conventional fallback mesh; budget pixel overdraw."
+      },
+      "damage_states": [
+        "Lit",
+        "Flickering cosmetic",
+        "Off"
+      ],
+      "animations": [
+        "Static environment asset; no skeletal animation"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "luminance": "Calibrate emissive against exposure; avoid relying on tiny emitters for stable Lumen illumination"
+      }
+    },
+    {
+      "id": "SM_CoastalPine",
+      "category": "vegetation",
+      "status": "PLANNED",
+      "content_path": "/Game/Downfall/Environment/Vegetation/SM_CoastalPine",
+      "dimensions_m": [
+        7,
+        7,
+        14
+      ],
+      "topology": {
+        "triangles_lod0": 90000,
+        "authoring_notes": "Original authored silhouette. Weighted bevels; physically measured thickness; preserve silhouette at all LODs."
+      },
+      "nanite": {
+        "enabled_target": false,
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+      },
+      "materials": [
+        "Scanned-or-authored original bark normals",
+        "Two-sided foliage with seasonal variation and wind weights"
+      ],
+      "uv": {
+        "layout": "Bark tiling UV plus atlas foliage with 16px transparent gutters; branch cards oriented to minimize overdraw.",
+        "texel_density_px_per_meter": 512
+      },
+      "texture_sets": [
+        {
+          "name": "SM_CoastalPine_PBR",
+          "source_resolution": 4096,
+          "channels": [
+            "base_color",
+            "normal",
+            "roughness",
+            "ambient_occlusion",
+            "subsurface_color",
+            "thickness",
+            "wind_mask"
+          ],
+          "streaming": "Source resolution is an upper bound; mipmapped streaming enabled. Target gameplay pool budgets control resident mip; no forced 8K residency."
+        }
+      ],
+      "rigging": {
+        "type": "none",
+        "skeleton": null,
+        "notes": "No skeletal deformation; pivots at grid-aligned installation datum."
+      },
+      "collision": [
+        "Trunk capsule",
+        "Branches/needles excluded from player collision"
+      ],
+      "lod": {
+        "triangle_ratios": [
+          1.0,
+          0.5,
+          0.25,
+          0.08
+        ],
+        "strategy": "Four authored LODs; profile screen-size transitions; preserve weapon/cabin silhouette and readable robot hit regions. Animation update budget is independent of mesh LOD."
+      },
+      "damage_states": [
+        "Intact",
+        "Scorched",
+        "Authored trunk break and fallen version"
+      ],
+      "animations": [
+        "Vertex wind with amplitude bounded by measured canopy",
+        "Storm motion distance-gated"
+      ],
+      "source": "Original production specification; requires DCC modeling, texture authoring, import, QA and licensing review of any later third-party inputs. No production mesh supplied.",
+      "production_requirements": {
+        "scalability": "Near mesh, mid reduced canopy, far impostor/HLOD; validate shadow overdraw and temporal stability"
+      }
+    }
+  ]
+}
