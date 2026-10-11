@@ -6,8 +6,8 @@ public class DownfallTarget : TargetRules
     public DownfallTarget(TargetInfo Target) : base(Target)
     {
         Type = TargetType.Game;
-        DefaultBuildSettings = BuildSettingsVersion.V5;
-        IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_6;
+        DefaultBuildSettings = BuildSettingsVersion.Latest;
+        IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
         ExtraModuleNames.Add("Downfall");
     }
 }

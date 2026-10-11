@@ -2,7 +2,7 @@
 
 **Current result: UNRUN.** Unreal Engine is unavailable in the source-authoring
 environment. This procedure defines the first acceptance run; it is not a passing
-test report. Use a compiled UE 5.6 editor and generated `L_Breakwater` first.
+test report. Use a compiled UE 5.8 editor and generated `L_Breakwater` first.
 
 ## Native automation
 

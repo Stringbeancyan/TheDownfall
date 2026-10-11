@@ -1,6 +1,6 @@
 # Unreal architecture and network contract
 
-Target **Unreal Engine 5.6**, C++ runtime module `Downfall`, desktop development first. Engine-side compilation remains necessary. The initial foundation intentionally has one runtime module; the boundaries below define ownership without requiring premature plugins. Native blockout content is a test fixture for gameplay, not a substitute for art assets.
+Target **Unreal Engine 5.8**, C++ runtime module `Downfall`, desktop development first. Engine-side compilation remains necessary. The initial foundation intentionally has one runtime module; the boundaries below define ownership without requiring premature plugins. Native blockout content is a test fixture for gameplay, not a substitute for art assets.
 
 ## Source and content organization
 

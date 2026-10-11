@@ -1,4 +1,4 @@
-"""Generate the original Breakwater gameplay blockout inside Unreal Editor 5.6.
+"""Generate the original Breakwater gameplay blockout inside Unreal Editor 5.8.
 
 Build DownfallEditor first. Run from Tools > Execute Python Script or with:
   UnrealEditor Downfall.uproject -ExecutePythonScript=/absolute/path/to/this.py

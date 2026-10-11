@@ -3,7 +3,7 @@
 
 This is a local multiplayer test launcher, not a claim that gameplay assertions pass.
 Follow Docs/MultiplayerAcceptance.md during the run. Each process gets its own log.
-Requires a compiled DownfallEditor, generated Breakwater map, and licensed UE 5.6.
+Requires a compiled DownfallEditor, generated Breakwater map, and licensed UE 5.8.
 """
 from __future__ import annotations
 
@@ -82,15 +82,15 @@ def main() -> int:
     args = parser.parse_args()
     root = args.engine_root or os.environ.get("UE_ROOT")
     if not root:
-        parser.error("Set UE_ROOT to your licensed Unreal Engine 5.6 installation.")
+        parser.error("Set UE_ROOT to your licensed Unreal Engine 5.8 installation.")
     engine_root = Path(root).expanduser().resolve()
     try:
         editor = editor_executable(engine_root, platform.system())
         version = json.loads((engine_root / "Engine/Build/Build.version").read_text(encoding="utf-8"))
     except (ValueError, OSError) as exc:
         parser.error(str(exc))
-    if (version.get("MajorVersion"), version.get("MinorVersion")) != (5, 6):
-        parser.error("The project targets Unreal Engine 5.6.")
+    if (version.get("MajorVersion"), version.get("MinorVersion")) != (5, 8):
+        parser.error("The project targets Unreal Engine 5.8.")
     if not editor.is_file():
         parser.error(f"UnrealEditor executable not found: {editor}")
     if not (PROJECT_ROOT / "Content/Downfall/Maps/L_Breakwater.umap").is_file():

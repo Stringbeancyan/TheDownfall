@@ -2,7 +2,7 @@
 
 **Title:** DOWNFALL. All named people, districts, organizations, vehicles, and story events below are original development fiction.
 
-**Project state:** an initial Unreal Engine 5.6 C++ foundation and playable-blockout source, not a shipped game or a photorealistic asset package. An engine build, cooked dedicated server, hardware captures, animation performances, and production artwork remain acceptance work. See [FeatureStatus.md](FeatureStatus.md) for the evidence boundary.
+**Project state:** an initial Unreal Engine 5.8 C++ foundation and playable-blockout source, not a shipped game or a photorealistic asset package. An engine build, cooked dedicated server, hardware captures, animation performances, and production artwork remain acceptance work. See [FeatureStatus.md](FeatureStatus.md) for the evidence boundary.
 
 ## The game
 
@@ -73,7 +73,7 @@ Server relevance is independent of client visual streaming. Keep authoritative o
 
 ## Immediate production backlog
 
-- Compile the checked-in native project using licensed Unreal Engine 5.6 and record exact engine changelist/compiler versions.
+- Compile the checked-in native project using licensed Unreal Engine 5.8 and record exact engine changelist/compiler versions.
 - Generate/open the blockout map, run a dedicated server and two clients, then complete the four-client test in [VerticalSlice.md](VerticalSlice.md).
 - Replace one street bay, one room, one character, one weapon, and one vehicle with licensed or internally made art; evaluate a repeatable 02:00 beauty frame and an active firefight together.
 - Validate the vehicle prototype's authority/correction behavior before adding Chaos vehicle simulation or multiple seats.

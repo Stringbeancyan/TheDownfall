@@ -1,6 +1,6 @@
 # DOWNFALL
 
-An original multiplayer urban operations game targeting **Unreal Engine 5.6**.
+An original multiplayer urban operations game targeting **Unreal Engine 5.8**.
 Four responders enter **Breakwater**, a district of the fictional coastal city
 **Velmora**, to restore a relay while damaged municipal robots control the streets.
 The long-term design expands into combined-arms battles across a connected region.
@@ -14,11 +14,12 @@ animation, dialogue recordings and sound assets are not bundled.
 
 ## Start here
 
-1. Install a licensed **UE 5.6** distribution and its supported C++ toolchain.
+1. Install a licensed **UE 5.8** distribution and its supported C++ toolchain.
    A source engine build with server support is needed for `DownfallServer`.
 2. Set `UE_ROOT` to the folder containing `Engine/` and run, from this checkout:
 
    ```sh
+   python Scripts/build.py --project-files
    python Scripts/build.py --target editor
    ```
 

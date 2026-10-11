@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "title": "Downfall",
-  "engine_target": "Unreal Engine 5.6",
+  "engine_target": "Unreal Engine 5.8",
   "units": "meters",
   "status_note": "All entries are original PLANNED production asset specifications, not delivered 3D models. The map generator and native actors use clearly identified primitive PLACEHOLDER geometry.",
   "coordinate_system": "Unreal: centimeters at import, X forward, Y right, Z up. dimensions_m = X extent, Y extent, Z extent.",
@@ -33,7 +33,7 @@
       },
       "nanite": {
         "enabled_target": false,
-        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.8."
       },
       "materials": [
         "Skin: layered SSS, pore normals, regional roughness and nonuniform perfusion masks",
@@ -125,7 +125,7 @@
       },
       "nanite": {
         "enabled_target": false,
-        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.8."
       },
       "materials": [
         "Skin and eye masters shared with original human pipeline",
@@ -204,7 +204,7 @@
       },
       "nanite": {
         "enabled_target": false,
-        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.8."
       },
       "materials": [
         "Ceramic armor: chips reveal fiber-metal substrate",
@@ -304,7 +304,7 @@
       },
       "nanite": {
         "enabled_target": false,
-        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.8."
       },
       "materials": [
         "Paint with clearcoat, orange peel and directional scratches",
@@ -394,7 +394,7 @@
       },
       "nanite": {
         "enabled_target": false,
-        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.8."
       },
       "materials": [
         "Powder-coated steel cab",
@@ -469,7 +469,7 @@
       },
       "nanite": {
         "enabled_target": false,
-        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.8."
       },
       "materials": [
         "Carbon composite frame",
@@ -542,7 +542,7 @@
       },
       "nanite": {
         "enabled_target": false,
-        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.8."
       },
       "materials": [
         "Hard-anodized aluminum receiver with localized edge wear",
@@ -626,7 +626,7 @@
       },
       "nanite": {
         "enabled_target": false,
-        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.8."
       },
       "materials": [
         "Blackened alloy slide",
@@ -1494,7 +1494,7 @@
       },
       "nanite": {
         "enabled_target": false,
-        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.6."
+        "reason": "Conventional skeletal or masked-geometry path for predictable animation, collision and cross-platform support in UE 5.8."
       },
       "materials": [
         "Scanned-or-authored original bark normals",

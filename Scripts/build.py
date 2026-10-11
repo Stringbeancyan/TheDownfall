@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build Downfall with a locally installed, licensed Unreal Engine 5.6.
+"""Build Downfall with a locally installed, licensed Unreal Engine 5.8.
 
 Examples:
   python Scripts/build.py --target editor
@@ -22,6 +22,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--engine-root", type=Path, default=None)
     parser.add_argument("--target", choices=("editor", "game", "server"), default="editor")
+    parser.add_argument("--project-files", action="store_true", help="Generate IDE project files and exit")
     parser.add_argument("--configuration", choices=("DebugGame", "Development", "Shipping"), default="Development")
     parser.add_argument("--cook", action="store_true", help="Build, cook and stage; requires a generated and saved map")
     parser.add_argument("--map", default="/Game/Downfall/Maps/L_Breakwater")
@@ -29,7 +30,7 @@ def main() -> int:
     args = parser.parse_args()
     engine_input = args.engine_root or os.environ.get("UE_ROOT")
     if not engine_input:
-        parser.error("UE_ROOT is unset. Point it at your licensed Unreal Engine 5.6 installation.")
+        parser.error("UE_ROOT is unset. Point it at your licensed Unreal Engine 5.8 installation.")
     engine_root = Path(engine_input).expanduser().resolve()
     project = Path(__file__).resolve().parents[1] / "Downfall.uproject"
     version_path = engine_root / "Engine/Build/Build.version"
@@ -39,15 +40,21 @@ def main() -> int:
         version = json.loads(version_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         parser.error(f"Cannot read Unreal Engine version: {exc}")
-    if (version.get("MajorVersion"), version.get("MinorVersion")) != (5, 6):
-        parser.error("This prototype targets Unreal Engine 5.6. Validate an engine upgrade separately.")
+    if (version.get("MajorVersion"), version.get("MinorVersion")) != (5, 8):
+        parser.error("This project targets the Unreal Engine 5.8 line.")
     host = platform.system()
     if host not in {"Windows", "Linux", "Darwin"}:
         parser.error(f"Unsupported build host: {host}")
     target_platform = {"Windows": "Win64", "Linux": "Linux", "Darwin": "Mac"}[host]
     suffix = ".bat" if host == "Windows" else ".sh"
     batch = engine_root / "Engine/Build/BatchFiles"
-    if args.cook:
+    if args.project_files:
+        if args.cook:
+            parser.error("--project-files and --cook cannot be combined")
+        build_folder = batch if host == "Windows" else batch / ("Linux" if host == "Linux" else "Mac")
+        executable = build_folder / ("Build" + suffix)
+        command = [str(executable), "-projectfiles", f"-project={project}", "-game", "-rocket", "-progress"]
+    elif args.cook:
         if args.target == "editor":
             parser.error("--cook requires --target game or server")
         if not args.map.startswith("/Game/Downfall/") or any(c not in "/_" and not c.isalnum() for c in args.map):
