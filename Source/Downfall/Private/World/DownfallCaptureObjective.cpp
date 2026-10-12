@@ -15,7 +15,7 @@ ADownfallCaptureObjective::ADownfallCaptureObjective()
 {
     bReplicates = true;
     bAlwaysRelevant = true; // Small objective count; strategic state remains relevant to all players.
-    NetUpdateFrequency = 4.f;
+    SetNetUpdateFrequency(4.f);
     PrimaryActorTick.bCanEverTick = false;
     CaptureVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("CaptureVolume"));
     RootComponent = CaptureVolume;
@@ -56,9 +56,9 @@ void ADownfallCaptureObjective::EndPlay(const EEndPlayReason::Type Reason)
     Super::EndPlay(Reason);
 }
 
-void ADownfallCaptureObjective::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out) const
+void ADownfallCaptureObjective::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-    Super::GetLifetimeReplicatedProps(Out);
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(ADownfallCaptureObjective, State);
 }
 

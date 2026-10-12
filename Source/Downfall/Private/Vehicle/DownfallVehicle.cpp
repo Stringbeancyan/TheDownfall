@@ -28,8 +28,8 @@ ADownfallVehicle::ADownfallVehicle()
     // This prototype uses explicit authoritative snapshots for every connection.
     SetReplicateMovement(false);
     PrimaryActorTick.bCanEverTick = true;
-    NetUpdateFrequency = 30.f;
-    MinNetUpdateFrequency = 10.f;
+    SetNetUpdateFrequency(30.f);
+    SetMinNetUpdateFrequency(10.f);
     Collision = CreateDefaultSubobject<UBoxComponent>(TEXT("ChassisCollision"));
     SetRootComponent(Collision);
     Collision->SetBoxExtent(FVector(220.f, 95.f, 55.f));

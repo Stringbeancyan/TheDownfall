@@ -4,7 +4,7 @@
 
 ADownfallGameState::ADownfallGameState()
 {
-	NetUpdateFrequency = 5.0f;
+	SetNetUpdateFrequency(5.0f);
 }
 
 void ADownfallGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

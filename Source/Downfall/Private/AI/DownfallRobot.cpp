@@ -21,9 +21,9 @@ ADownfallRobot::ADownfallRobot()
 {
     PrimaryActorTick.bCanEverTick = true;
     bReplicates = true;
-    NetUpdateFrequency = 15.f;
-    MinNetUpdateFrequency = 5.f;
-    NetCullDistanceSquared = FMath::Square(15000.f);
+    SetNetUpdateFrequency(15.f);
+    SetMinNetUpdateFrequency(5.f);
+    SetNetCullDistanceSquared(FMath::Square(15000.f));
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
     AIControllerClass = AAIController::StaticClass();
     bUseControllerRotationYaw = false;
@@ -92,9 +92,9 @@ void ADownfallRobot::EndPlay(const EEndPlayReason::Type Reason)
     Super::EndPlay(Reason);
 }
 
-void ADownfallRobot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out) const
+void ADownfallRobot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-    Super::GetLifetimeReplicatedProps(Out);
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(ADownfallRobot, BrainState);
 }
 
@@ -130,8 +130,8 @@ void ADownfallRobot::Think()
     TArray<APawn*, TInlineAllocator<64>> Players;
     for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
     {
-        if (const APlayerController* Controller = It->Get())
-            if (IsEligibleTarget(Controller->GetPawn())) Players.Add(Controller->GetPawn());
+        if (const APlayerController* CandidateController = It->Get())
+            if (IsEligibleTarget(CandidateController->GetPawn())) Players.Add(CandidateController->GetPawn());
     }
     APawn* VisibleTarget = nullptr;
     float BestDistance = TNumericLimits<float>::Max();
@@ -206,7 +206,8 @@ void ADownfallRobot::FireAt(APawn* Pawn)
     MulticastShotCosmetics(Muzzle, bHit ? Hit.ImpactPoint : Eyes);
 }
 
-float ADownfallRobot::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* Instigator, AActor* Causer)
+float ADownfallRobot::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent,
+    AController* EventInstigator, AActor* DamageCauser)
 {
     if (!HasAuthority() || !Health->IsAlive() || !FMath::IsFinite(DamageAmount) || DamageAmount <= 0.f) return 0.f;
     if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
@@ -215,7 +216,7 @@ float ADownfallRobot::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
         // Prototype sensor weakpoint: upper capsule region. Authored per-part armor is a later system.
         if (GetActorTransform().InverseTransformPosition(Point.HitInfo.ImpactPoint).Z > 45.f) DamageAmount *= 1.5f;
     }
-    return Super::TakeDamage(DamageAmount, DamageEvent, Instigator, Causer);
+    return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
 void ADownfallRobot::OnDeath()

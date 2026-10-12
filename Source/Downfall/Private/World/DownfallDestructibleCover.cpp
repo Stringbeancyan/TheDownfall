@@ -12,7 +12,7 @@
 ADownfallDestructibleCover::ADownfallDestructibleCover()
 {
     bReplicates = true;
-    NetUpdateFrequency = 5.f;
+    SetNetUpdateFrequency(5.f);
     PrimaryActorTick.bCanEverTick = false;
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
     StructuralCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("StructuralCollision"));
@@ -49,9 +49,9 @@ void ADownfallDestructibleCover::BeginPlay()
     ApplyStructuralState();
 }
 
-void ADownfallDestructibleCover::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out) const
+void ADownfallDestructibleCover::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-    Super::GetLifetimeReplicatedProps(Out);
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(ADownfallDestructibleCover, StructuralState);
 }
 

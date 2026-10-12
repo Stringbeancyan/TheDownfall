@@ -30,8 +30,8 @@ ADownfallCharacter::ADownfallCharacter(const FObjectInitializer& ObjectInitializ
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
-	NetUpdateFrequency = 30.0f;
-	MinNetUpdateFrequency = 10.0f;
+	SetNetUpdateFrequency(30.0f);
+	SetMinNetUpdateFrequency(10.0f);
 	GetCapsuleComponent()->InitCapsuleSize(36.0f, 92.0f);
 	// Placeholder body meshes have no collision; AI and aiming trace the capsule.
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);

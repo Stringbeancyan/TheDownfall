@@ -22,7 +22,7 @@ ADownfallWorldDirector::ADownfallWorldDirector()
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
     bReplicates = true;
     bAlwaysRelevant = true;
-    NetUpdateFrequency = 2.0f;
+    SetNetUpdateFrequency(2.0f);
     PrimaryActorTick.bCanEverTick = false;
 }
 
@@ -59,9 +59,9 @@ void ADownfallWorldDirector::EndPlay(const EEndPlayReason::Type Reason)
     Super::EndPlay(Reason);
 }
 
-void ADownfallWorldDirector::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out) const
+void ADownfallWorldDirector::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-    Super::GetLifetimeReplicatedProps(Out);
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(ADownfallWorldDirector, Clock);
     DOREPLIFETIME(ADownfallWorldDirector, Weather);
 }
