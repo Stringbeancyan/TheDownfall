@@ -21,7 +21,7 @@ import time
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-MAP = "/Game/Downfall/Maps/L_Breakwater"
+MAP = "/Game/Downfall/Maps/L_Breakwater_District"
 
 
 def editor_executable(engine_root: Path, host: str) -> Path:
@@ -93,8 +93,8 @@ def main() -> int:
         parser.error("The project targets Unreal Engine 5.8.")
     if not editor.is_file():
         parser.error(f"UnrealEditor executable not found: {editor}")
-    if not (PROJECT_ROOT / "Content/Downfall/Maps/L_Breakwater.umap").is_file():
-        parser.error("Generate L_Breakwater with Scripts/build_vertical_slice.py in Unreal Editor first.")
+    if not (PROJECT_ROOT / "Content" / (MAP.removeprefix("/Game/") + ".umap")).is_file():
+        parser.error("Generate L_Breakwater_District with Scripts/build_vertical_slice.py in Unreal Editor first.")
     if not math.isfinite(args.duration) or args.duration < 0 or not 1 <= args.startup_timeout <= 600:
         parser.error("Duration must be nonnegative and startup timeout must be 1–600 seconds.")
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")

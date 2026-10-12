@@ -6,11 +6,13 @@ Four responders enter **Breakwater**, a district of the fictional coastal city
 The long-term design expands into combined-arms battles across a connected region.
 
 **Current delivery: source prototype, not a compiled or photorealistic game.**
-The project contains real C++ gameplay systems and an editor script that assembles
-the first blockout scene. Unreal Engine is absent from the development cloud
-machine, so UHT/C++ compilation, map generation, rendering, cooking and live
-multiplayer validation have **not run**. Production meshes, textures, skeletal
-animation, dialogue recordings and sound assets are not bundled.
+The project contains C++ gameplay, an automatically generated district, original
+procedural surface textures and articulated model kits. The user confirmed a
+successful native build at `9bef37b` with UE 5.8 / MSVC 14.44. The subsequent scene
+update still requires a local engine build and visual review; Unreal is absent
+from the cloud workspace. Production meshes, skeletal animation, dialogue
+recordings and sound assets are not bundled. See [scene update and black-screen
+recovery](Docs/SceneUpdate.md).
 
 ## Start here
 
@@ -23,11 +25,11 @@ animation, dialogue recordings and sound assets are not bundled.
    python Scripts/build.py --target editor
    ```
 
-3. Open `Downfall.uproject`. On the first run there is no generated startup map;
-   use a blank editor world and execute `Scripts/build_vertical_slice.py` through
-   **Tools → Execute Python Script**. It creates and saves
-   `/Game/Downfall/Maps/L_Breakwater` and six blockout materials. Existing maps are
-   protected unless explicit rebuild is enabled. See [tooling instructions](Scripts/README.md).
+3. On Windows, **LaunchDownfall.bat** builds and opens the editor. First interactive
+   launch automatically generates `/Game/Downfall/Maps/L_Breakwater_District`.
+   Wait for generation and material shaders. If automatic setup is disabled,
+   run `Scripts/build_vertical_slice.py` through **Tools → Execute Python Script**.
+   Existing maps are protected. See [tooling instructions](Scripts/README.md).
 4. Start the first separate-process multiplayer test:
 
    ```sh
@@ -53,10 +55,11 @@ primitive blockout. Use the existing checkout; cloud tasks are already isolated.
 | `World/` | Server clock/weather transitions, client lighting/fog, relay capture and persistent destructible-cover states |
 | `Presentation/` | Native HUD, optional 12-second camera/subtitle rehearsal, asset-driven positional audio API and acoustic boxes |
 
-The map generator assembles a 180 × 180 m district with four enterable blockout
-buildings, two crossing roads, four player starts, four breakable barriers, one
-robot, one vehicle, a relay and scene lighting. It is a small non-partitioned
-map. The full World Partition city is a production milestone.
+The map generator assembles a 180 × 180 m district with four enterable ground
+floors, detailed façade/roof kits, street furniture, textured weather-responsive
+surfaces, two roads, four player starts, four breakable barriers, one robot, one
+vehicle and a relay. This is a small non-partitioned prototype with procedural
+geometry. The full World Partition city is a production milestone.
 
 ## Controls
 
@@ -71,6 +74,7 @@ map. The full World Partition city is a production milestone.
 | Vehicle WASD / Space | Throttle, reverse, steering / brake |
 | F8 / F9 | Play / skip local cinematic rehearsal; use standalone clients to avoid PIE shortcut conflicts |
 | Escape | Release / recapture mouse; the server continues running |
+| F1 | Show / hide field controls |
 
 ## Production handoff
 

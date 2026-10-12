@@ -5,6 +5,7 @@
 #include "Components/LightComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/SkyLightComponent.h"
+#include "Components/MeshComponent.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/ExponentialHeightFog.h"
 #include "Engine/Light.h"
@@ -14,8 +15,10 @@
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/KismetMaterialLibrary.h"
 #include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
+#include "Presentation/DownfallRainComponent.h"
 
 ADownfallWorldDirector::ADownfallWorldDirector()
 {
@@ -24,6 +27,7 @@ ADownfallWorldDirector::ADownfallWorldDirector()
     bAlwaysRelevant = true;
     SetNetUpdateFrequency(2.0f);
     PrimaryActorTick.bCanEverTick = false;
+    CreateDefaultSubobject<UDownfallRainComponent>(TEXT("LocalRain"));
 }
 
 void ADownfallWorldDirector::BeginPlay()
@@ -47,6 +51,7 @@ void ADownfallWorldDirector::BeginPlay()
     if (GetNetMode() != NM_DedicatedServer)
     {
         DiscoverSceneLighting();
+        DiscoverSurfaceMaterials();
         UpdateCosmetics();
         GetWorldTimerManager().SetTimer(CosmeticsTimer, this, &ThisClass::UpdateCosmetics, 0.1f, true);
     }
@@ -218,7 +223,7 @@ void ADownfallWorldDirector::UpdateCosmetics()
         MoonLight->SetIntensity(.2f * Illuminated * (1.f - Daylight)
             * FMath::Clamp(static_cast<float>(Moon.AltitudeDegrees / 8.0), 0.f, 1.f));
     }
-    if (SkyLight) SkyLight->SetIntensity(FMath::Lerp(.12f, 1.0f, Daylight));
+    if (SkyLight) SkyLight->SetIntensity(FMath::Lerp(.6f, 1.0f, Daylight));
     if (FogComponent)
     {
         FogComponent->SetFogDensity(Sample.FogDensity);
@@ -226,6 +231,11 @@ void ADownfallWorldDirector::UpdateCosmetics()
     }
     for (int32 Index = 0; Index < NightLights.Num(); ++Index)
         if (IsValid(NightLights[Index])) NightLights[Index]->SetIntensity(NightLightIntensities[Index] * (1.f - Daylight));
+    for (UMaterialInstanceDynamic* Surface : SurfaceMaterials)
+    {
+        Surface->SetScalarParameterValue(TEXT("Wetness"), Sample.Wetness);
+        Surface->SetScalarParameterValue(TEXT("SnowCoverage"), Sample.Snow);
+    }
     if (WorldParameters)
     {
         UKismetMaterialLibrary::SetScalarParameterValue(this, WorldParameters, TEXT("RainIntensity"), Sample.Rain);
@@ -233,5 +243,32 @@ void ADownfallWorldDirector::UpdateCosmetics()
         UKismetMaterialLibrary::SetScalarParameterValue(this, WorldParameters, TEXT("SnowCoverage"), Sample.Snow);
         UKismetMaterialLibrary::SetScalarParameterValue(this, WorldParameters, TEXT("WindSpeed"), Sample.WindSpeed);
         UKismetMaterialLibrary::SetScalarParameterValue(this, WorldParameters, TEXT("TimeOfDayHours"), Hour);
+    }
+}
+
+void ADownfallWorldDirector::DiscoverSurfaceMaterials()
+{
+    // Share one dynamic instance per authored surface, not one per street prop.
+    // This scene is resident; streamed districts should register at load time.
+    TMap<UMaterialInterface*, UMaterialInstanceDynamic*> Instances;
+    for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+    {
+        TInlineComponentArray<UMeshComponent*> Meshes;
+        It->GetComponents(Meshes);
+        for (UMeshComponent* Mesh : Meshes)
+        {
+            for (int32 Slot = 0; Slot < Mesh->GetNumMaterials(); ++Slot)
+            {
+                UMaterialInterface* Material = Mesh->GetMaterial(Slot);
+                if (!Material || !Material->GetName().StartsWith(TEXT("M_District_"))) continue;
+                UMaterialInstanceDynamic*& Instance = Instances.FindOrAdd(Material);
+                if (!Instance)
+                {
+                    Instance = UMaterialInstanceDynamic::Create(Material, this);
+                    SurfaceMaterials.Add(Instance);
+                }
+                Mesh->SetMaterial(Slot, Instance);
+            }
+        }
     }
 }

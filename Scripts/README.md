@@ -52,9 +52,12 @@ cross-compilation in a separate, platform-validated build pipeline.
 
 ## Generate Breakwater
 
-After a successful native editor build, open `Downfall.uproject`, save or discard
-all unsaved editor work, then execute `Scripts/build_vertical_slice.py` using
-**Tools > Execute Python Script**. The project must enable Editor Scripting
+After a successful native editor build, open `Downfall.uproject`. On Windows,
+`LaunchDownfall.bat` performs both steps. The first interactive launch generates
+the missing district automatically; later launches preserve it. For manual
+generation, save or discard all unsaved editor work, then execute
+`Scripts/build_vertical_slice.py` using **Tools > Execute Python Script**.
+The project must enable Editor Scripting
 Utilities and Python Editor Script Plugin. Equivalent Linux invocation:
 
 ```sh
@@ -73,11 +76,13 @@ Use a GPU-capable editor session for visual review. This script uses actual
 Editor actor/material APIs and must be executed against UE 5.8 to validate those
 APIs; standalone Python syntax validation is insufficient.
 
-The generator produces `/Game/Downfall/Maps/L_Breakwater`, six blockout materials,
-four PlayerStarts, a 180 m square street district, four enterable buildings with
-front and rear door openings, environmental lighting and native gameplay actors.
-The expected map file is `Content/Downfall/Maps/L_Breakwater.umap`. Generated
-meshes are built-in cubes; their fidelity is explicitly **PLACEHOLDER**.
+The generator produces `/Game/Downfall/Maps/L_Breakwater_District`, procedural PBR
+materials, four PlayerStarts, a 180 m street district, four enterable ground floors,
+façade/roof kits, furnishings and street props, lighting and native gameplay actors.
+The expected file is `Content/Downfall/Maps/L_Breakwater_District.umap`. Original
+packed texture sources are in `ArtSource/Surfaces`; built-in shapes form the kit
+models. Production model fidelity remains **PLACEHOLDER**. See
+[scene update](../Docs/SceneUpdate.md) for local acceptance and limitations.
 
 An existing map is protected by default. An explicit rebuild requires:
 

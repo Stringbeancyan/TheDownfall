@@ -4,7 +4,7 @@
 Examples:
   python Scripts/build.py --target editor
   python Scripts/build.py --target server --configuration Development
-  python Scripts/build.py --target game --cook --map /Game/Downfall/Maps/L_Breakwater
+  python Scripts/build.py --target game --cook --map /Game/Downfall/Maps/L_Breakwater_District
 Set UE_ROOT to the directory containing Engine. UE binaries are not downloaded.
 """
 from __future__ import annotations
@@ -25,7 +25,7 @@ def main() -> int:
     parser.add_argument("--project-files", action="store_true", help="Generate IDE project files and exit")
     parser.add_argument("--configuration", choices=("DebugGame", "Development", "Shipping"), default="Development")
     parser.add_argument("--cook", action="store_true", help="Build, cook and stage; requires a generated and saved map")
-    parser.add_argument("--map", default="/Game/Downfall/Maps/L_Breakwater")
+    parser.add_argument("--map", default="/Game/Downfall/Maps/L_Breakwater_District")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     engine_input = args.engine_root or os.environ.get("UE_ROOT")

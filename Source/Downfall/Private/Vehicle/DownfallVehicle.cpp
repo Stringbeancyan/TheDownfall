@@ -20,6 +20,7 @@
 #include "InputModifiers.h"
 #include "Net/UnrealNetwork.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Presentation/DownfallModelComponent.h"
 
 ADownfallVehicle::ADownfallVehicle()
 {
@@ -65,6 +66,9 @@ ADownfallVehicle::ADownfallVehicle()
     CameraArm->SetRelativeRotation(FRotator(-15.f, 0.f, 0.f));
     Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     Camera->SetupAttachment(CameraArm);
+    UDownfallModelComponent* Model = CreateDefaultSubobject<UDownfallModelComponent>(TEXT("UtilityModel"));
+    Model->SetupAttachment(Collision);
+    Model->ModelKind = EDownfallModelKind::UtilityVehicle;
 }
 
 void ADownfallVehicle::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

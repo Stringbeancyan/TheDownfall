@@ -38,7 +38,8 @@ the match. Defeated players respawn after five seconds. There is no inventory,
 carryable routing key, extraction trigger, revive interaction or checkpoint
 service in this first code drop; those belong to the full Last Light mission.
 
-Initial environment is 02:00 solar time and rain state. A game day takes 1,800
+Initial playable environment is 16:00 solar time and rain state for readable
+first-launch lighting. The cinematic art target remains 02:00. A game day takes 1,800
 real seconds. Every 120 real seconds the server advances a scripted
 rain → storm → fog → clear → rain cycle, blending for 35 seconds. Directional
 lights, skylight, fog and tagged lamps react. Rain particles, wind-blown cloth,

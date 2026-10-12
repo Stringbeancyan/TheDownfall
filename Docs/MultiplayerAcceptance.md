@@ -2,7 +2,7 @@
 
 **Current result: UNRUN.** Unreal Engine is unavailable in the source-authoring
 environment. This procedure defines the first acceptance run; it is not a passing
-test report. Use a compiled UE 5.8 editor and generated `L_Breakwater` first.
+test report. Use a compiled UE 5.8 editor and generated `L_Breakwater_District` first.
 
 ## Native automation
 
@@ -78,7 +78,7 @@ python Scripts/build.py --target server --cook
 python Scripts/build.py --target game --cook
 ```
 
-Launch the staged server with `L_Breakwater -log -port=7777` and staged clients
+Launch the staged server with `L_Breakwater_District -log -port=7777` and staged clients
 with `127.0.0.1:7777 -log`. Select the actual staged executables reported by UAT
 for the host platform; the editor launcher is not a packaged-build launcher.
 Repeat all acceptance observations and inspect missing-asset/NetGUID/UHT/cook

@@ -1,10 +1,10 @@
-"""Generate the original Breakwater gameplay blockout inside Unreal Editor 5.8.
+"""Generate the original Breakwater district inside Unreal Editor 5.8.
 
 Build DownfallEditor first. Run from Tools > Execute Python Script or with:
   UnrealEditor Downfall.uproject -ExecutePythonScript=/absolute/path/to/this.py
 
-This generates PLACEHOLDER primitive geometry, not photoreal production assets.
-The first invocation creates and saves /Game/Downfall/Maps/L_Breakwater.
+This generates procedural kit geometry, not photoreal production assets.
+The first invocation creates and saves /Game/Downfall/Maps/L_Breakwater_District.
 For an existing map, set DOWNFALL_REBUILD_SLICE=1 before launching the editor.
 Explicit rebuild removes only actors tagged Downfall.Generated.Blockout;
 untagged user actors and existing materials are retained. Save your work first.
@@ -13,13 +13,12 @@ No project content is downloaded and no external asset credentials are required.
 from __future__ import annotations
 
 import json
-import math
 import os
 from pathlib import Path
 
 import unreal
 
-MAP_PATH = "/Game/Downfall/Maps/L_Breakwater"
+MAP_PATH = "/Game/Downfall/Maps/L_Breakwater_District"
 GENERATED_TAG = "Downfall.Generated.Blockout"
 MATERIAL_ROOT = "/Game/Downfall/Generated/Materials"
 REPORT_NAME = "BreakwaterBuildReport.json"
@@ -75,6 +74,106 @@ def make_material(name, color, roughness=0.7, metallic=0.0, emissive=0.0):
     return material
 
 
+def make_surface(name, color, texture_kind, tile_cm, metallic=0.0):
+    """Triplanar metre-scale detail, wetness and upward-facing snow response."""
+    path = f"{MATERIAL_ROOT}/M_District_{name}"
+    if assets.does_asset_exist(path):
+        return assets.load_asset(path)
+    source = Path(__file__).resolve().parents[1] / "ArtSource/Surfaces" / f"T_{texture_kind}_Surface.tga"
+    texture_path = f"/Game/Downfall/Generated/Textures/{source.stem}"
+    if not assets.does_asset_exist(texture_path):
+        task = unreal.AssetImportTask()
+        task.set_editor_property("filename", str(source))
+        task.set_editor_property("destination_path", "/Game/Downfall/Generated/Textures")
+        task.set_editor_property("automated", True)
+        task.set_editor_property("save", True)
+        unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks([task])
+    texture = assets.load_asset(texture_path)
+    if not isinstance(texture, unreal.Texture2D):
+        raise RuntimeError(f"Could not import surface texture: {source}")
+    texture.set_editor_property("srgb", False)
+    texture.set_editor_property("compression_settings", unreal.TextureCompressionSettings.TC_MASKS)
+    assets.save_asset(texture_path)
+    material = unreal.AssetToolsHelpers.get_asset_tools().create_asset(
+        f"M_District_{name}", MATERIAL_ROOT, unreal.Material, unreal.MaterialFactoryNew())
+    editor = unreal.MaterialEditingLibrary
+
+    def expression(cls, **properties):
+        node = editor.create_material_expression(material, cls)
+        for key, value in properties.items():
+            node.set_editor_property(key, value)
+        return node
+
+    def custom(code, inputs, output=unreal.CustomMaterialOutputType.CMOT_FLOAT3):
+        node = expression(unreal.MaterialExpressionCustom, code=code, output_type=output)
+        pins = []
+        for pin_name, source_node in inputs.items():
+            pin = unreal.CustomInput()
+            pin.set_editor_property("input_name", pin_name)
+            pins.append(pin)
+        node.set_editor_property("inputs", pins)
+        for pin_name, source_node in inputs.items():
+            editor.connect_material_expressions(source_node, "", node, pin_name)
+        return node
+
+    position = expression(unreal.MaterialExpressionWorldPosition)
+    normal = expression(unreal.MaterialExpressionVertexNormalWS)
+    tex = expression(unreal.MaterialExpressionTextureObject, texture=texture)
+    wet = expression(unreal.MaterialExpressionScalarParameter, parameter_name="Wetness", default_value=0.65)
+    snow = expression(unreal.MaterialExpressionScalarParameter, parameter_name="SnowCoverage", default_value=0.0)
+    base = expression(unreal.MaterialExpressionConstant3Vector, constant=unreal.LinearColor(*color, 1.0))
+    detail = custom(f"""
+        float3 p = P / {float(tile_cm):.1f};
+        float3 w = pow(abs(N), 4); w /= max(dot(w, float3(1,1,1)), 0.001);
+        return Texture2DSample(Tex, TexSampler, p.yz).rgb * w.x
+             + Texture2DSample(Tex, TexSampler, p.xz).rgb * w.y
+             + Texture2DSample(Tex, TexSampler, p.xy).rgb * w.z;
+    """, {"P": position, "N": normal, "Tex": tex})
+    albedo = custom("return lerp(Base * lerp(0.65,1.15,D.r) * lerp(1.0,0.58,Wet), float3(.72,.77,.80), saturate(Snow * N.z));",
+                    {"Base": base, "D": detail, "Wet": wet, "Snow": snow, "N": normal})
+    rough = custom("return lerp(lerp(D.g, lerp(.12,.32,D.b), Wet), .88, saturate(Snow*N.z));",
+                   {"D": detail, "Wet": wet, "Snow": snow, "N": normal}, unreal.CustomMaterialOutputType.CMOT_FLOAT1)
+    editor.connect_material_property(albedo, "", unreal.MaterialProperty.MP_BASE_COLOR)
+    editor.connect_material_property(rough, "", unreal.MaterialProperty.MP_ROUGHNESS)
+    # Fine height variation perturbs the world-space normal. The derivative
+    # formulation works across all three projections without a tangent seam.
+    bump = custom("""
+        float3 dx = ddx(P), dy = ddy(P);
+        float3 rx = cross(dy, N), ry = cross(N, dx);
+        float det = dot(dx, rx);
+        float3 grad = sign(det) * (ddx(D.r) * rx + ddy(D.r) * ry);
+        return normalize(max(abs(det), .00001) * N - grad * .09);
+    """, {"P": position, "N": normal, "D": detail})
+    material.set_editor_property("tangent_space_normal", False)
+    editor.connect_material_property(bump, "", unreal.MaterialProperty.MP_NORMAL)
+    editor.connect_material_property(constant_expression(material, metallic), "", unreal.MaterialProperty.MP_METALLIC)
+    editor.recompile_material(material)
+    if not assets.save_asset(path, only_if_is_dirty=False):
+        raise RuntimeError(f"Unable to save {path}")
+    return material
+
+
+def make_model_material():
+    path = f"{MATERIAL_ROOT}/M_ModelPaint"
+    if assets.does_asset_exist(path):
+        return
+    material = unreal.AssetToolsHelpers.get_asset_tools().create_asset(
+        "M_ModelPaint", MATERIAL_ROOT, unreal.Material, unreal.MaterialFactoryNew())
+    editor = unreal.MaterialEditingLibrary
+    color = editor.create_material_expression(material, unreal.MaterialExpressionVectorParameter)
+    color.set_editor_property("parameter_name", "BaseColor")
+    color.set_editor_property("default_value", unreal.LinearColor(.23,.27,.23,1))
+    editor.connect_material_property(color, "", unreal.MaterialProperty.MP_BASE_COLOR)
+    for name, value, prop in (("Roughness", .5, unreal.MaterialProperty.MP_ROUGHNESS),
+                              ("Metallic", .3, unreal.MaterialProperty.MP_METALLIC)):
+        scalar = editor.create_material_expression(material, unreal.MaterialExpressionScalarParameter)
+        scalar.set_editor_property("parameter_name", name)
+        scalar.set_editor_property("default_value", value)
+        editor.connect_material_property(scalar, "", prop)
+    editor.recompile_material(material)
+    assets.save_asset(path, only_if_is_dirty=False)
+
+
 def box(label, position, dimensions, material, rotation=(0, 0, 0), collision=True):
     actor = spawn(unreal.StaticMeshActor, label, position, rotation)
     component = actor.static_mesh_component
@@ -92,7 +191,7 @@ def text(label, message, position, rotation, size=35.0):
     component = actor.get_component_by_class(unreal.TextRenderComponent)
     component.set_text(message)
     component.set_world_size(size)
-    component.set_text_render_color(unreal.Color(160, 222, 221, 255))
+    component.set_text_render_color(unreal.Color(219, 211, 187, 255))
     return actor
 
 
@@ -128,7 +227,8 @@ def building(name, center, width, depth, height, front_sign, wall, floor, metal,
     # Text faces the street; it is art direction signage, not screen-space HUD.
     text(f"{name}_Sign", name.replace("_", " ").upper(), (x - 230, front_y + front_sign * 18, 425), (0, -90 if front_sign < 0 else 90, 0), 42)
     lamp = spawn(unreal.PointLight, f"{name}_InteriorLight", (x, y, 295))
-    lamp.point_light_component.set_intensity(5000.0)
+    lamp.point_light_component.set_mobility(unreal.ComponentMobility.MOVABLE)
+    lamp.point_light_component.set_intensity(18000.0)
     lamp.point_light_component.set_attenuation_radius(2100.0)
     lamp.point_light_component.set_light_color(unreal.LinearColor(0.62, 0.76, 1.0, 1.0))
     lamp.point_light_component.set_cast_shadows(False)
@@ -137,7 +237,7 @@ def building(name, center, width, depth, height, front_sign, wall, floor, metal,
 def create_lighting():
     sun = spawn(unreal.DirectionalLight, "Breakwater_Sun", (0, 0, 12000), (-42, -28, 0), ("Downfall.Sun",))
     sun.directional_light_component.set_mobility(unreal.ComponentMobility.MOVABLE)
-    sun.directional_light_component.set_intensity(0.0)
+    sun.directional_light_component.set_intensity(28000.0)
     sun.directional_light_component.set_editor_property("atmosphere_sun_light", True)
     sun.directional_light_component.set_editor_property("atmosphere_sun_light_index", 0)
     moon = spawn(unreal.DirectionalLight, "Breakwater_Moon", (0, 0, 12500), (-35, 145, 0), ("Downfall.Moon",))
@@ -149,11 +249,24 @@ def create_lighting():
     sky = spawn(unreal.SkyLight, "Breakwater_SkyLight", (0, 0, 1000))
     sky.light_component.set_mobility(unreal.ComponentMobility.MOVABLE)
     sky.light_component.set_editor_property("real_time_capture", True)
-    sky.light_component.set_intensity(0.4)
+    sky.light_component.set_intensity(1.0)
     spawn(unreal.SkyAtmosphere, "Breakwater_Atmosphere", (0, 0, 0))
     fog = spawn(unreal.ExponentialHeightFog, "Breakwater_AtmosphericFog", (0, 0, 120))
-    fog.component.set_editor_property("fog_density", 0.025)
+    fog.component.set_editor_property("fog_density", 0.012)
     fog.component.set_editor_property("volumetric_fog", True)
+    exposure = spawn(unreal.PostProcessVolume, "District_Exposure", (0, 0, 0))
+    exposure.set_editor_property("unbound", True)
+    settings = exposure.get_editor_property("settings")
+    settings.set_editor_property("override_auto_exposure_min_brightness", True)
+    settings.set_editor_property("override_auto_exposure_max_brightness", True)
+    # UE5 extended luminance range: these properties represent EV100.
+    settings.set_editor_property("auto_exposure_min_brightness", -2.0)
+    settings.set_editor_property("auto_exposure_max_brightness", 16.0)
+    settings.set_editor_property("override_auto_exposure_bias", True)
+    settings.set_editor_property("auto_exposure_bias", 0.7)
+    settings.set_editor_property("override_motion_blur_amount", True)
+    settings.set_editor_property("motion_blur_amount", 0.0)
+    exposure.set_editor_property("settings", settings)
     for x in (-6100, -2900, 2900, 6100):
         for side in (-1, 1):
             y = side * 1120
@@ -231,25 +344,54 @@ def main():
             if unreal.Name(GENERATED_TAG) in actor.tags:
                 if not actor_subsystem.destroy_actor(actor):
                     raise RuntimeError(f"Unable to regenerate tagged actor {actor.get_actor_label()}")
-    elif not level_subsystem.new_level(MAP_PATH):
-        raise RuntimeError(f"Unable to create {MAP_PATH}")
+    else:
+        staging = "/Game/Downfall/Maps/L_Breakwater_District_Build"
+        if assets.does_asset_exist(staging):
+            if not level_subsystem.load_level(staging):
+                raise RuntimeError(f"Unable to open incomplete build: {staging}")
+            for actor in actor_subsystem.get_all_level_actors():
+                if unreal.Name(GENERATED_TAG) in actor.tags:
+                    if not actor_subsystem.destroy_actor(actor):
+                        raise RuntimeError("Could not clean incomplete generated scene")
+        elif not level_subsystem.new_level(staging):
+            raise RuntimeError(f"Unable to create {staging}")
+    make_model_material()
+    rain = make_material("M_RainStreak", (.32,.38,.42), .2, emissive=.35)
+    if isinstance(rain, unreal.Material):
+        rain.set_editor_property("blend_mode", unreal.BlendMode.BLEND_TRANSLUCENT)
+        rain.set_editor_property("two_sided", True)
+        unreal.MaterialEditingLibrary.connect_material_property(
+            constant_expression(rain, .19), "", unreal.MaterialProperty.MP_OPACITY)
+        unreal.MaterialEditingLibrary.recompile_material(rain)
+        assets.save_asset(f"{MATERIAL_ROOT}/M_RainStreak")
     materials = {
-        "concrete": make_material("M_Blockout_Concrete", (0.22, 0.235, 0.25), 0.82),
-        "wall": make_material("M_Blockout_Masonry", (0.16, 0.18, 0.20), 0.87),
-        "road": make_material("M_Blockout_Asphalt", (0.028, 0.033, 0.038), 0.36),
-        "metal": make_material("M_Blockout_PaintedMetal", (0.10, 0.13, 0.15), 0.4, 0.55),
+        "concrete": make_surface("Concrete", (0.38, 0.37, 0.33), "Concrete", 180),
+        "wall": make_surface("Masonry", (0.29, 0.31, 0.30), "Concrete", 230),
+        "road": make_surface("Asphalt", (0.065, 0.07, 0.075), "Asphalt", 120),
+        "metal": make_surface("Metal", (0.12, 0.16, 0.17), "Metal", 100, 0.65),
         "marking": make_material("M_Blockout_RoadPaint", (0.66, 0.64, 0.50), 0.6),
-        "neon": make_material("M_Blockout_CyanSign", (0.03, 0.45, 0.55), 0.32, emissive=8.0),
+        "neon": make_material("M_Practical_Amber", (0.9, 0.62, 0.28), 0.32, emissive=3.0),
+        "glass": make_material("M_Window_Smoked", (0.06, 0.10, 0.12), 0.16, 0.4),
+        "rubber": make_material("M_Prop_Rubber", (0.023, 0.026, 0.028), 0.87),
+        "wood": make_surface("Timber", (0.30, 0.19, 0.095), "Concrete", 250),
     }
     create_streets()
     for name, center in (("Ferry_Exchange", (-3900, -3900)), ("Grid_Service", (3900, -3900)), ("Tide_Market", (-3900, 3900)), ("Relay_Annex", (3900, 3900))):
         building(name, center, 4400, 3600, 680, 1 if center[1] < 0 else -1, materials["wall"], materials["concrete"], materials["metal"], materials["neon"])
     create_lighting()
     create_gameplay(native_classes)
-    if not level_subsystem.save_current_level():
+    # Additional architecture is deliberately separate from gameplay placement.
+    import sys
+    script_dir = str(Path(__file__).resolve().parent)
+    if script_dir not in sys.path:
+        sys.path.insert(0, script_dir)
+    from district_details import dress_district
+    dress_district(box, spawn, text, materials)
+    world = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+    if not unreal.EditorLoadingAndSavingUtils.save_map(world, MAP_PATH):
         raise RuntimeError("Editor could not save the completed blockout level")
     report = {
-        "status": "GENERATED_PLACEHOLDER_MAP",
+        "status": "GENERATED_PROCEDURAL_PROTOTYPE_MAP",
         "map": MAP_PATH,
         "world_dimensions_m": [180, 180],
         "generated_actor_count": len(spawned),
@@ -258,11 +400,13 @@ def main():
         "generated_tag": GENERATED_TAG,
         "retained_user_actors": "All actors without generated_tag remain on explicit rebuild.",
         "validation_pending": ["Unreal automation suite", "two-client dedicated-server test", "visual art production", "performance profiling"],
-        "limitations": ["Primitive blockout geometry and flat PBR materials", "No authored textures, dialogue recordings, rain particles, mocap or Sequencer asset", "Single sublevel, not a World Partition city"],
+        "limitations": ["Procedural kit geometry, not production scan assets", "No dialogue recordings, mocap or Sequencer asset", "Single sublevel, not a World Partition city"],
     }
     report_path = Path(unreal.Paths.project_saved_dir()) / REPORT_NAME
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).set_level_viewport_camera_info(
+        unreal.Vector(-6500, -2200, 1100), unreal.Rotator(-12, 18, 0))
     unreal.log(f"DOWNFALL: saved {MAP_PATH}; {len(spawned)} generated actors; report {report_path}")
 
 

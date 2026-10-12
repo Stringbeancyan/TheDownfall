@@ -21,6 +21,7 @@
 #include "InputModifiers.h"
 #include "Net/UnrealNetwork.h"
 #include "Presentation/DownfallCinematicDirector.h"
+#include "Presentation/DownfallModelComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Vehicle/DownfallVehicle.h"
 
@@ -84,6 +85,9 @@ ADownfallCharacter::ADownfallCharacter(const FObjectInitializer& ObjectInitializ
 	}
 	if (HeadMesh.Succeeded()) PrototypeHead->SetStaticMesh(HeadMesh.Object);
 	if (WeaponMesh.Succeeded()) PrototypeWeaponBody->SetStaticMesh(WeaponMesh.Object);
+	UDownfallModelComponent* Model = CreateDefaultSubobject<UDownfallModelComponent>(TEXT("ResponderModel"));
+	Model->SetupAttachment(GetRootComponent());
+	Model->ModelKind = EDownfallModelKind::Responder;
 }
 
 void ADownfallCharacter::BeginPlay()

@@ -6,7 +6,8 @@ means executable code exists and the named standalone checks passed.
 validation pending. **PLANNED** means a design or asset specification only.
 **PLACEHOLDER** means intentional temporary representation.
 
-No Unreal-dependent feature is marked engine-verified. No measured frame rate,
+The user confirmed a native build at `9bef37b` in UE 5.8 with MSVC 14.44. The
+subsequent presentation update is not yet engine-verified. No measured frame rate,
 player capacity, cooked build or photorealistic image is available yet.
 
 | Area | Status | Evidence / remaining work |
@@ -17,8 +18,8 @@ player capacity, cooked build or photorealistic image is available yet.
 | Portable clock/solar math | IMPLEMENTED | C++17/UBSan tests passed; solar-time approximation and artistic lunar phase, not full ephemerides |
 | Build/editor/server targets | PROTOTYPED | `.uproject`, Build.cs, three targets and build launcher; engine compile unrun |
 | Separate-process multiplayer launcher | IMPLEMENTED tooling | Command/validation tests passed; actual Unreal processes unrun |
-| Breakwater generator | PROTOTYPED | Real Editor Python actor/material/save calls; engine execution unrun |
-| City/buildings/characters/weapons/vehicle models | PLACEHOLDER | Built-in primitives assembled by code; four blockout interiors, no production asset fidelity |
+| Breakwater generator | PROTOTYPED | First-launch bootstrap, staged district save, textured façade/interior/street kits; updated Editor API execution unrun |
+| City/buildings/characters/weapons/vehicle models | PLACEHOLDER | Original assembled component kits, four enterable ground floors, cosmetic gait and wheel motion; no production skeletal meshes |
 | Four-player co-op session | PROTOTYPED | Ordinary replication, direct connect, team 1, configured four-player cap; live test pending |
 | Character movement | PROTOTYPED | CharacterMovement and native Enhanced Input; sprint saved-move flag, crouch, jump, shoulder camera |
 | Prone, lean, mantle, vault, climb, slide, swim, ladder, cover | PLANNED | Animation and server movement contracts; no motion assets or traversal implementation |
@@ -28,7 +29,7 @@ player capacity, cooked build or photorealistic image is available yet.
 | Armor, penetration, ricochet, suppression, injury, melee | PLANNED | No claims of full realistic combat or hit rewind |
 | Inventory, loot, extraction economy | PLANNED | No persistence/backend or item system |
 | Utility vehicle | PROTOTYPED | One seat, range/LOS entry, swept exit, server motion, explicit snapshots for driver and observers |
-| Vehicle suspension, interior, deformation, mirrors, sound | PLANNED | Kinematic box prototype; no Chaos vehicle, prediction or articulated wheels |
+| Vehicle suspension, interior, deformation, mirrors, sound | PLANNED | Kinematic chassis with cosmetic wheel spin; no Chaos suspension, prediction, cabin, reflective mirrors or audio |
 | Aircraft, boats, motorcycles, tanks/APCs | PLANNED | Representative production asset specifications only |
 | Sentinel robot | PROTOTYPED | Server bounded perception, patrol/pursuit/search/fire; primitive sensor-region damage bonus |
 | Tactical squads, State Trees/BT/EQS/Smart Objects, crowds | PLANNED | No flanking/cover planner or civilian life simulation; simple robot has no navmesh pathfinding |
@@ -36,14 +37,15 @@ player capacity, cooked build or photorealistic image is available yet.
 | Structural destruction | PROTOTYPED | Intact/damaged/destroyed barrier collision state and six local cosmetic fragments |
 | Full Chaos building/vehicle destruction | PLANNED | No fracture collections, deformation assets, persistent world damage service or craters |
 | Day/night and weather state | PROTOTYPED | Shared clock; clear/rain/storm/fog/snow transitions; directional light, skylight, fog and night lamps |
-| Rain/snow effects, accumulation, droplets, puddle simulation | PLANNED | No Niagara weather systems or authored weather materials; wet-looking road is fixed placeholder roughness |
+| Rain and wet surfaces | PROTOTYPED | Bounded instanced rain with roof tests, triplanar surface detail and wetness-driven roughness/albedo; local engine review pending |
+| Snow particles, accumulation, droplets, puddle simulation | PLANNED | Snow is a surface tint only; no Niagara precipitation or physically simulated water |
 | Accurate moon/stars/tides/season ephemerides | PLANNED | Approximate phase/orbit only; no star field or astronomy accuracy claim |
 | NPC schedules, traffic, dynamic businesses/grid | PLANNED | Design only |
 | Local intro | PROTOTYPED | Twelve-second camera/subtitle rehearsal, F8/F9, local handoff; live match continues |
 | Sequencer/facial dialogue/mocap/voice | PLANNED | Sixty-second shot script; no recorded performance or Level Sequence asset |
 | Spatial audio API | PROTOTYPED | Asset-driven point sources, 343 m/s delay, bounded events, box zones and one-ray occlusion |
 | Audible soundscape / MetaSounds / VO / score | PLANNED | No sound assets are bundled or connected; current scene is silent |
-| HUD | PROTOTYPED | Native health/ammo/relay/time/subtitle display and projected aim reticle |
+| HUD | PROTOTYPED | Restrained field layout, compass, health/ammo/relay/time, contextual vehicle prompts, F1 help and cinematic subtitles; viewport acceptance pending |
 | CommonUI menus, settings/remapping/accessibility screens | PLANNED | Concrete UX specifications; no menus represented as implemented |
 | Matchmaking, parties, voice, chat, reporting, friends/crossplay | PLANNED | Provider integration/authentication/platform agreements required |
 | GAS | PLANNED integration | Plugin/module enabled; current health/weapon implementation does not use ASC/AttributeSets |

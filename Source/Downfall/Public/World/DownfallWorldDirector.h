@@ -10,6 +10,7 @@ class UExponentialHeightFogComponent;
 class ULightComponent;
 class UMaterialParameterCollection;
 class USkyLightComponent;
+class UMaterialInstanceDynamic;
 
 UENUM(BlueprintType)
 enum class EDownfallWeatherPreset : uint8 { Clear, Rain, Storm, Fog, Snow };
@@ -31,7 +32,7 @@ struct FDownfallWorldClock
 {
     GENERATED_BODY()
     UPROPERTY() double AnchorServerSeconds = 0.0;
-    UPROPERTY() float AnchorHour = 2.0f;
+    UPROPERTY() float AnchorHour = 16.0f;
     UPROPERTY() float SecondsPerDay = 1800.0f;
     UPROPERTY() uint16 DayOfYear = 120;
     UPROPERTY() float LatitudeDegrees = 41.0f;
@@ -71,7 +72,7 @@ public:
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-    UPROPERTY(EditAnywhere, Category="World|Clock", meta=(ClampMin="0", ClampMax="24")) float InitialHour = 2.0f;
+    UPROPERTY(EditAnywhere, Category="World|Clock", meta=(ClampMin="0", ClampMax="24")) float InitialHour = 16.0f;
     UPROPERTY(EditAnywhere, Category="World|Clock", meta=(ClampMin="60")) float RealSecondsPerDay = 1800.0f;
     UPROPERTY(EditAnywhere, Category="World|Clock", meta=(ClampMin="1", ClampMax="365")) int32 InitialDayOfYear = 120;
     UPROPERTY(EditAnywhere, Category="World|Clock", meta=(ClampMin="-89.9", ClampMax="89.9")) float Latitude = 41.0f;
@@ -88,12 +89,14 @@ private:
     UPROPERTY(Transient) TObjectPtr<USkyLightComponent> SkyLight;
     UPROPERTY(Transient) TObjectPtr<UExponentialHeightFogComponent> FogComponent;
     UPROPERTY(Transient) TArray<TObjectPtr<ULightComponent>> NightLights;
+    UPROPERTY(Transient) TArray<TObjectPtr<UMaterialInstanceDynamic>> SurfaceMaterials;
     TArray<float> NightLightIntensities;
     FTimerHandle CosmeticsTimer;
     FTimerHandle WeatherCycleTimer;
     void AdvanceWeatherCycle();
     UFUNCTION() void OnRep_Environment();
     void DiscoverSceneLighting();
+    void DiscoverSurfaceMaterials();
     void UpdateCosmetics();
     double ServerTime() const;
     static FDownfallWeatherSample PresetSample(EDownfallWeatherPreset Preset);

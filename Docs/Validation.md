@@ -5,7 +5,7 @@ Unreal Build Tool and a configured `UE_ROOT` were absent.
 
 | Check actually executed | Result |
 |---|---|
-| `python3 -m unittest discover -s Tests -v` | 13 passed: asset schema rejection cases and multiplayer-launcher arguments/readiness parsing |
+| `python3 -m unittest discover -s Tests -v` | 22 passed: asset schemas, launcher readiness, matching startup/game/server/cook maps, bootstrap branches/failures, district doorway/spawn clearance, object budget, daylight recipe and deterministic TGA data |
 | `python3 Scripts/validate_assets.py` | PASS: all 20 original production specifications satisfy the manifest contract |
 | Python byte compilation, project JSON, reflected-header include order, documentation links and whitespace | PASS; these are source checks, not Unreal API/build validation |
 | Portable combat C++ compiled with `-std=c++17 -Wall -Wextra -Werror -fsanitize=undefined` | PASS: 4,080,300 ammunition-conservation cases; firing cadence under repeated requests, request-token budget, friendly/self/environmental damage, NaN and overflow guards; no UBSan diagnostic |
@@ -22,11 +22,17 @@ client, abandoned-seat cleanup, swept exit clearance, request throttling,
 camera-relative HUD aiming, and documentation/API naming mismatches. These
 corrections still require engine-side regression testing.
 
-**UNRUN:** UHT/native project compilation; Editor Python API execution; generated
+The user reported a successful native UE 5.8 / MSVC 14.44 build at `9bef37b`.
+This does not establish that the later scene/presentation changes compile or render.
+
+**UNRUN for the current presentation update:** UHT/native compilation;
+Editor Python API execution; generated
 map inspection; all eight Unreal automation tests; live two/four-client dedicated
 server tests; cook/package; audio/visual/animation review; bandwidth/load/soak;
 hardware RT, Lumen and other renderer validation. There is no generated `.umap`,
-`.uasset`, cooked executable or rendered beauty capture in this delivery.
+`.uasset`, cooked executable or rendered beauty capture in this delivery. The
+source scene recipe creates the engine assets on the user's machine. Portable
+tests mock Unreal and validate recipe contracts, not its Python API or shaders.
 
 The next prerequisite is a licensed UE 5.8 installation with the supported native
 toolchain. Set `UE_ROOT`, build the editor, generate the scene, and follow

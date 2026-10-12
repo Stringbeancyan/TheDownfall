@@ -16,6 +16,7 @@
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Presentation/DownfallModelComponent.h"
 
 ADownfallRobot::ADownfallRobot()
 {
@@ -67,6 +68,9 @@ ADownfallRobot::ADownfallRobot()
     SensorLight->SetIntensity(30.f);
     SensorLight->SetAttenuationRadius(110.f);
     SensorLight->SetCastShadows(false);
+    UDownfallModelComponent* Model = CreateDefaultSubobject<UDownfallModelComponent>(TEXT("SentinelModel"));
+    Model->SetupAttachment(RootComponent);
+    Model->ModelKind = EDownfallModelKind::Sentinel;
 }
 
 void ADownfallRobot::BeginPlay()
