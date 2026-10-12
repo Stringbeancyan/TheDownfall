@@ -3,7 +3,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDownfallClockWrapTest, "Downfall.World.ClockWrap",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::EngineFilter)
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FDownfallClockWrapTest::RunTest(const FString& Parameters)
 {
     TestEqual(TEXT("Negative hours wrap into preceding day"), DownfallWorldMath::WrapHours(-1), 23.0);
@@ -17,7 +17,7 @@ bool FDownfallClockWrapTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDownfallSolarTest, "Downfall.World.SolarPosition",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::EngineFilter)
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FDownfallSolarTest::RunTest(const FString& Parameters)
 {
     const auto EquinoxNoon = DownfallWorldMath::SolarPosition(12, 0, 80);
@@ -33,7 +33,7 @@ bool FDownfallSolarTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDownfallMoonTest, "Downfall.World.ApproximateMoonPhase",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::EngineFilter)
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FDownfallMoonTest::RunTest(const FString& Parameters)
 {
     TestTrue(TEXT("Synodic month returns initial phase"), FMath::IsNearlyEqual(DownfallWorldMath::ApproximateMoonPhase(29.53059,.5), .5, 1.e-9));

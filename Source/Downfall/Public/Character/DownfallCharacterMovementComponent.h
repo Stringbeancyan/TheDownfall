@@ -34,7 +34,7 @@ public:
 	virtual uint8 GetCompressedFlags() const override;
 	virtual bool CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* Character,
 		float MaxDelta) const override;
-	virtual void SetMoveFor(ACharacter* Character, float DeltaTime, FVector const& NewAcceleration,
+	virtual void SetMoveFor(ACharacter* Character, float MoveDeltaTime, FVector const& NewAcceleration,
 		FNetworkPredictionData_Client_Character& ClientData) override;
 	virtual void PrepMoveFor(ACharacter* Character) override;
 

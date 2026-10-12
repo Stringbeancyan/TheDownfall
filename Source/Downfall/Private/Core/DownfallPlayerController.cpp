@@ -35,11 +35,11 @@ void ADownfallPlayerController::ToggleMouseCapture()
 	SetIgnoreMoveInput(bMenusCaptureMouse);
 	if (bMenusCaptureMouse)
 	{
-		if (ADownfallCharacter* Character = Cast<ADownfallCharacter>(GetPawn()))
+		if (ADownfallCharacter* ControlledCharacter = Cast<ADownfallCharacter>(GetPawn()))
 		{
-			Character->GetCombatComponent()->StopFire();
+			ControlledCharacter->GetCombatComponent()->StopFire();
 			if (UDownfallCharacterMovementComponent* Movement =
-				Cast<UDownfallCharacterMovementComponent>(Character->GetCharacterMovement()))
+				Cast<UDownfallCharacterMovementComponent>(ControlledCharacter->GetCharacterMovement()))
 			{
 				Movement->SetWantsToSprint(false);
 			}

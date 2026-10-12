@@ -70,10 +70,10 @@ bool FSavedMove_Downfall::CanCombineWith(const FSavedMovePtr& NewMove,
 		Super::CanCombineWith(NewMove, Character, MaxDelta);
 }
 
-void FSavedMove_Downfall::SetMoveFor(ACharacter* Character, const float DeltaTime,
+void FSavedMove_Downfall::SetMoveFor(ACharacter* Character, const float MoveDeltaTime,
 	FVector const& NewAcceleration, FNetworkPredictionData_Client_Character& ClientData)
 {
-	Super::SetMoveFor(Character, DeltaTime, NewAcceleration, ClientData);
+	Super::SetMoveFor(Character, MoveDeltaTime, NewAcceleration, ClientData);
 	if (const UDownfallCharacterMovementComponent* Movement =
 		Cast<UDownfallCharacterMovementComponent>(Character->GetCharacterMovement()))
 	{
